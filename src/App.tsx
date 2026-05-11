@@ -4,31 +4,40 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import PasswordGenerator from "./components/PasswordGenerator";
 import EncryptorDecryptor from "./components/EncryptorDecryptor";
-import SecretKeyDialog from "./components/SecretKeyDialog";
+import {hasSecretKeyVerifier, saveSecretKeyVerifier, verifySecretKey} from "./lib/SecretKeyVerifier";
+import {SecretKeyDialogMode} from "./components/SecretKeyDialogMode";
+import SetSecretKeyDialog from "./components/SetSecretKeyDialog";
 import ThemeSwitch from "./components/ThemeSwitch";
-
-const SecretKeyStorage = "secretKey";
+import UnlockSecretKeyDialog from "./components/UnlockSecretKeyDialog";
 
 function App() {
-  const [key, setKey] = useState(() => {
-    const savedKey = localStorage.getItem(SecretKeyStorage);
-    return savedKey ? Number(savedKey) : 0;
-  });
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMounted, setDialogMounted] = useState(false);
+  const [key, setKey] = useState<number | null>(null);
+  const [hasSavedVerifier, setHasSavedVerifier] = useState(() => hasSecretKeyVerifier());
+  const [dialogMode, setDialogMode] = useState<SecretKeyDialogMode>(
+    hasSavedVerifier ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup
+  );
+  const [dialogOpen, setDialogOpen] = useState(true);
+  const [dialogMounted, setDialogMounted] = useState(true);
 
   const openDialog = () => {
+    setDialogMode(hasSavedVerifier && key === null ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup);
     setDialogMounted(true);
     setDialogOpen(true);
   };
 
-  const handleSetKey = (newKey: number, remember: boolean) => {
-    setKey(Number(newKey));
-    if (remember && newKey) {
-      localStorage.setItem(SecretKeyStorage, newKey.toString());
-    } else {
-      localStorage.removeItem(SecretKeyStorage);
+  const handleSetKey = (newKey: number) => {
+    saveSecretKeyVerifier(newKey);
+    setHasSavedVerifier(true);
+    setKey(newKey);
+    return null;
+  };
+
+  const handleUnlockKey = (newKey: number) => {
+    if (!verifySecretKey(newKey)) {
+      return "Secret Key is incorrect";
     }
+    setKey(newKey);
+    return null;
   };
 
   return (
@@ -45,13 +54,21 @@ function App() {
             <ThemeSwitch/>
           </div>
         </div>
-        {dialogMounted && (
-          <SecretKeyDialog
+        {dialogMounted && dialogMode === SecretKeyDialogMode.Setup && (
+          <SetSecretKeyDialog
             open={dialogOpen}
             onClose={() => setDialogOpen(false)}
             onExited={() => setDialogMounted(false)}
             keyValue={key}
             setKeyValue={handleSetKey}
+          />
+        )}
+        {dialogMounted && dialogMode === SecretKeyDialogMode.Unlock && (
+          <UnlockSecretKeyDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            onExited={() => setDialogMounted(false)}
+            setKeyValue={handleUnlockKey}
           />
         )}
         <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">

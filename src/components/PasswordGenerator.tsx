@@ -20,7 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {generatePassword} from "../lib/PasswordLogic";
 
-function PasswordGenerator({keyValue}: {keyValue: number}) {
+function PasswordGenerator({keyValue}: {keyValue: number | null}) {
   const [name, setName] = useState("");
   const [no, setNo] = useState(0);
   const [length, setLength] = useState(16);
@@ -44,7 +44,7 @@ function PasswordGenerator({keyValue}: {keyValue: number}) {
   };
 
   const handleGeneratePassword = () => {
-    if (!keyValue) {
+    if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }

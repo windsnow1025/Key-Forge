@@ -1,12 +1,11 @@
 import {type MouseEvent, useState} from "react";
+import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
@@ -15,19 +14,34 @@ import KeyIcon from "@mui/icons-material/Key";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-function SecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
+function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
   open: boolean;
   onClose: () => void;
   onExited: () => void;
-  keyValue: number;
-  setKeyValue: (newKey: number, remember: boolean) => void;
+  keyValue: number | null;
+  setKeyValue: (newKey: number) => string | null;
 }) {
-  const [inputValue, setInputValue] = useState<number>(keyValue);
-  const [rememberKey, setRememberKey] = useState(true);
+  const [inputValue, setInputValue] = useState(keyValue === null ? "" : keyValue.toString());
+  const [confirmationValue, setConfirmationValue] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [showKey, setShowKey] = useState(false);
 
   const handleSave = () => {
-    setKeyValue(inputValue, rememberKey);
+    const trimmedValue = inputValue.trim();
+    const newKey = Number(trimmedValue);
+    if (!trimmedValue || !Number.isFinite(newKey) || newKey === 0) {
+      setErrorMessage("Secret Key is required");
+      return;
+    }
+    if (trimmedValue !== confirmationValue.trim()) {
+      setErrorMessage("Secret Keys do not match");
+      return;
+    }
+    const error = setKeyValue(newKey);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
     onClose();
   };
 
@@ -38,16 +52,24 @@ function SecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} slotProps={{transition: {onExited}}}>
+    <Dialog open={open} slotProps={{transition: {onExited}}}>
       <DialogTitle>Set Secret Key</DialogTitle>
       <DialogContent>
+        {errorMessage && (
+          <Alert severity="error" sx={{mt: 1, mb: 1}}>
+            {errorMessage}
+          </Alert>
+        )}
         <FormControl fullWidth margin="dense" variant="outlined">
           <InputLabel htmlFor="outlined-adornment-secret-key">Secret Key</InputLabel>
           <OutlinedInput
             id="outlined-adornment-secret-key"
             type={showKey ? "text" : "password"}
             value={inputValue}
-            onChange={(e) => setInputValue(Number(e.target.value))}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setErrorMessage("");
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <KeyIcon/>
@@ -70,23 +92,30 @@ function SecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
             autoFocus
           />
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={rememberKey}
-              onChange={(e) => setRememberKey(e.target.checked)}
-              color="primary"
-            />
-          }
-          label="Remember this key"
-        />
+        <FormControl fullWidth margin="dense" variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-confirm-secret-key">Confirm Secret Key</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-confirm-secret-key"
+            type={showKey ? "text" : "password"}
+            value={confirmationValue}
+            onChange={(e) => {
+              setConfirmationValue(e.target.value);
+              setErrorMessage("");
+            }}
+            startAdornment={
+              <InputAdornment position="start">
+                <KeyIcon/>
+              </InputAdornment>
+            }
+            label="Confirm Secret Key"
+          />
+        </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSave} variant="contained">Save</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default SecretKeyDialog;
+export default SetSecretKeyDialog;

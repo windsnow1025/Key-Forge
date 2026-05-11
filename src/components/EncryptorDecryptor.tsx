@@ -20,7 +20,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {decryptAES, encryptAES} from "../lib/EncryptionLogic";
 
-function EncryptorDecryptor({keyValue}: {keyValue: number}) {
+function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
   const [tabValue, setTabValue] = useState(0);
   const [plaintext, setPlaintext] = useState("");
   const [ciphertext, setCiphertext] = useState("");
@@ -44,7 +44,7 @@ function EncryptorDecryptor({keyValue}: {keyValue: number}) {
   };
 
   const handleEncrypt = () => {
-    if (!keyValue) {
+    if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }
@@ -58,7 +58,7 @@ function EncryptorDecryptor({keyValue}: {keyValue: number}) {
   };
 
   const handleDecrypt = () => {
-    if (!keyValue) {
+    if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }

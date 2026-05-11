@@ -1,0 +1,61 @@
+import sha256 from "crypto-js/sha256";
+import hex from "crypto-js/enc-hex";
+
+const SecretKeyVerifierStorage = "secretKeyVerifier";
+const SaltByteLength = 16;
+
+type SecretKeyVerifier = {
+  salt: string;
+  verifier: string;
+};
+
+export function hasSecretKeyVerifier() {
+  return readSecretKeyVerifier() !== null;
+}
+
+export function saveSecretKeyVerifier(secretKey: number) {
+  const salt = generateSalt();
+  const payload: SecretKeyVerifier = {
+    salt,
+    verifier: computeSecretKeyVerifier(secretKey, salt),
+  };
+  localStorage.setItem(SecretKeyVerifierStorage, JSON.stringify(payload));
+}
+
+export function verifySecretKey(secretKey: number) {
+  const payload = readSecretKeyVerifier();
+  if (!payload) {
+    return false;
+  }
+  return computeSecretKeyVerifier(secretKey, payload.salt) === payload.verifier;
+}
+
+function readSecretKeyVerifier(): SecretKeyVerifier | null {
+  const storedValue = localStorage.getItem(SecretKeyVerifierStorage);
+  if (!storedValue) {
+    return null;
+  }
+
+  try {
+    const parsedValue = JSON.parse(storedValue) as Partial<SecretKeyVerifier>;
+    if (
+      typeof parsedValue.salt !== "string" ||
+      typeof parsedValue.verifier !== "string"
+    ) {
+      return null;
+    }
+    return parsedValue as SecretKeyVerifier;
+  } catch {
+    return null;
+  }
+}
+
+function computeSecretKeyVerifier(secretKey: number, salt: string) {
+  const verifierInput = `${salt}:${secretKey}`;
+  return sha256(verifierInput).toString(hex);
+}
+
+function generateSalt() {
+  const salt = crypto.getRandomValues(new Uint8Array(SaltByteLength));
+  return Array.from(salt, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
