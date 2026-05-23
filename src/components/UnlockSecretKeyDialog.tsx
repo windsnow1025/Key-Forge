@@ -64,6 +64,12 @@ function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue}: {
               setInputValue(e.target.value);
               setErrorMessage("");
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleUnlock();
+              }
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <KeyIcon/>

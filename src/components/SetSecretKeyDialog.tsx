@@ -70,6 +70,12 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
               setInputValue(e.target.value);
               setErrorMessage("");
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSave();
+              }
+            }}
             startAdornment={
               <InputAdornment position="start">
                 <KeyIcon/>
@@ -101,6 +107,12 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
             onChange={(e) => {
               setConfirmationValue(e.target.value);
               setErrorMessage("");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSave();
+              }
             }}
             startAdornment={
               <InputAdornment position="start">
