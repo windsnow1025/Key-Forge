@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Alert from "@mui/material/Alert";
 import type {AlertColor} from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -30,6 +30,11 @@ function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState<AlertColor>("success");
+
+  useEffect(() => {
+    setCiphertext("");
+    setDecryptedText("");
+  }, [keyValue]);
 
   const showAlert = (message: string, severity: AlertColor) => {
     setAlertMessage(message);
