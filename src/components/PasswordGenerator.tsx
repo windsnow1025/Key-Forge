@@ -31,10 +31,6 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState<AlertColor>("success");
 
-  useEffect(() => {
-    setPassword("");
-  }, [keyValue]);
-
   const showAlert = (message: string, severity: AlertColor) => {
     setAlertMessage(message);
     setAlertSeverity(severity);
