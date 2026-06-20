@@ -103,6 +103,12 @@ function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
                   maxRows={5}
                   value={plaintext}
                   onChange={(e) => setPlaintext(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === "Enter") {
+                      e.preventDefault();
+                      handleEncrypt();
+                    }
+                  }}
                   variant="outlined"
                 />
                 <Button
@@ -149,6 +155,12 @@ function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
                     rows={3}
                     value={textToDecrypt}
                     onChange={(e) => setTextToDecrypt(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.ctrlKey && e.key === "Enter") {
+                        e.preventDefault();
+                        handleDecrypt();
+                      }
+                    }}
                     label="Text to Decrypt"
                   />
                 </FormControl>

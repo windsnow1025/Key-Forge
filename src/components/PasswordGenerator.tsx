@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Alert from "@mui/material/Alert";
 import type {AlertColor} from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -53,20 +53,6 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
     handleContentCopy(generatedPassword);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "Enter") {
-        (document.activeElement as HTMLElement | null)?.blur();
-        const generateButton = document.getElementById("generate");
-        setTimeout(() => generateButton?.click(), 0);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
   return (
     <>
       <Card variant="outlined">
@@ -82,6 +68,12 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
                 id="site-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.ctrlKey && e.key === "Enter") {
+                    e.preventDefault();
+                    handleGeneratePassword();
+                  }
+                }}
                 startAdornment={
                   <InputAdornment position="start">
                     <PersonIcon/>
@@ -98,6 +90,12 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
                 type="number"
                 value={no}
                 onChange={(e) => setNo(parseInt(e.target.value) || 0)}
+                onKeyDown={(e) => {
+                  if (e.ctrlKey && e.key === "Enter") {
+                    e.preventDefault();
+                    handleGeneratePassword();
+                  }
+                }}
                 startAdornment={
                   <InputAdornment position="start">
                     <NumbersIcon/>
@@ -122,7 +120,6 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
             </Box>
 
             <Button
-              id="generate"
               fullWidth
               variant="contained"
               onClick={handleGeneratePassword}
