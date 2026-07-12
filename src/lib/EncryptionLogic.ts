@@ -1,23 +1,44 @@
-import AES from 'crypto-js/aes';
-import enc from 'crypto-js/enc-utf8';
-import sha256 from 'crypto-js/sha256';
-import hex from 'crypto-js/enc-hex';
+import {sha256Bytes} from "./Hash";
 
-export function generateAESKey(key: number): string {
-  return sha256(key.toString()).toString(hex);
+// Ciphertext format: base64 (AES-256-GCM ciphertext + 12 bytes IV)
+export const IVByteLength = 12;
+
+async function importAESKey(key: number): Promise<CryptoKey> {
+  const digest = await sha256Bytes(key.toString());
+  return crypto.subtle.importKey("raw", digest, "AES-GCM", false, ["encrypt", "decrypt"]);
 }
 
-export function encryptAES(plaintext: string, key: number): string {
-  if (!plaintext) return '';
+export async function encryptAES(
+  plaintext: string,
+  key: number,
+  iv: Uint8Array<ArrayBuffer> = crypto.getRandomValues(new Uint8Array(IVByteLength)),
+): Promise<string> {
+  if (!plaintext) return "";
 
-  const aesKey = generateAESKey(key);
-  return AES.encrypt(plaintext, aesKey).toString();
+  const aesKey = await importAESKey(key);
+  const encrypted = await crypto.subtle.encrypt(
+    {name: "AES-GCM", iv},
+    aesKey,
+    new TextEncoder().encode(plaintext),
+  );
+
+  const payload = new Uint8Array(IVByteLength + encrypted.byteLength);
+  payload.set(iv);
+  payload.set(new Uint8Array(encrypted), IVByteLength);
+  return payload.toBase64();
 }
 
-export function decryptAES(ciphertext: string, key: number): string {
-  if (!ciphertext) return '';
+export async function decryptAES(ciphertext: string, key: number): Promise<string> {
+  if (!ciphertext) return "";
 
-  const aesKey = generateAESKey(key);
-  const bytes = AES.decrypt(ciphertext, aesKey);
-  return bytes.toString(enc);
+  try {
+    const aesKey = await importAESKey(key);
+    const payload = Uint8Array.fromBase64(ciphertext);
+    const iv = payload.subarray(0, IVByteLength);
+    const encrypted = payload.subarray(IVByteLength);
+    const decrypted = await crypto.subtle.decrypt({name: "AES-GCM", iv}, aesKey, encrypted);
+    return new TextDecoder().decode(decrypted);
+  } catch {
+    throw new Error("Decryption failed");
+  }
 }

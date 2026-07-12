@@ -1,5 +1,4 @@
-import sha256 from "crypto-js/sha256";
-import hex from "crypto-js/enc-hex";
+import {sha256Hex} from "./Hash";
 
 const SecretKeyVerifierStorage = "secretKeyVerifier";
 const SaltByteLength = 16;
@@ -13,21 +12,21 @@ export function hasSecretKeyVerifier() {
   return readSecretKeyVerifier() !== null;
 }
 
-export function saveSecretKeyVerifier(secretKey: number) {
+export async function saveSecretKeyVerifier(secretKey: number) {
   const salt = generateSalt();
   const payload: SecretKeyVerifier = {
     salt,
-    verifier: computeSecretKeyVerifier(secretKey, salt),
+    verifier: await computeSecretKeyVerifier(secretKey, salt),
   };
   localStorage.setItem(SecretKeyVerifierStorage, JSON.stringify(payload));
 }
 
-export function verifySecretKey(secretKey: number) {
+export async function verifySecretKey(secretKey: number) {
   const payload = readSecretKeyVerifier();
   if (!payload) {
     return false;
   }
-  return computeSecretKeyVerifier(secretKey, payload.salt) === payload.verifier;
+  return (await computeSecretKeyVerifier(secretKey, payload.salt)) === payload.verifier;
 }
 
 function readSecretKeyVerifier(): SecretKeyVerifier | null {
@@ -52,7 +51,7 @@ function readSecretKeyVerifier(): SecretKeyVerifier | null {
 
 function computeSecretKeyVerifier(secretKey: number, salt: string) {
   const verifierInput = `${salt}:${secretKey}`;
-  return sha256(verifierInput).toString(hex);
+  return sha256Hex(verifierInput);
 }
 
 function generateSalt() {

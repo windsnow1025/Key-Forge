@@ -43,12 +43,12 @@ function PasswordGenerator({keyValue}: {keyValue: number | null}) {
       .catch((err: Error) => showAlert(err.message, "error"));
   };
 
-  const handleGeneratePassword = () => {
+  const handleGeneratePassword = async () => {
     if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }
-    const generatedPassword = generatePassword(keyValue, name, no, length);
+    const generatedPassword = await generatePassword(keyValue, name, no, length);
     setPassword(generatedPassword);
     handleContentCopy(generatedPassword);
   };

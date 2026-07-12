@@ -43,12 +43,12 @@ function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
       .catch((err: Error) => showAlert(err.message, "error"));
   };
 
-  const handleEncrypt = () => {
+  const handleEncrypt = async () => {
     if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }
-    const encrypted = encryptAES(plaintext, keyValue);
+    const encrypted = await encryptAES(plaintext, keyValue);
     if (!encrypted) {
       showAlert("Encryption failed", "error");
       return;
@@ -57,13 +57,13 @@ function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
     handleContentCopy(encrypted);
   };
 
-  const handleDecrypt = () => {
+  const handleDecrypt = async () => {
     if (keyValue === null) {
       showAlert("Please set your Secret Key", "warning");
       return;
     }
     try {
-      const decrypted = decryptAES(textToDecrypt, keyValue);
+      const decrypted = await decryptAES(textToDecrypt, keyValue);
       if (!decrypted) {
         throw new Error("Decryption failed");
       }

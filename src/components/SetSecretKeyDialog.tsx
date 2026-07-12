@@ -19,14 +19,14 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
   onClose: () => void;
   onExited: () => void;
   keyValue: number | null;
-  setKeyValue: (newKey: number) => string | null;
+  setKeyValue: (newKey: number) => Promise<string | null>;
 }) {
   const [inputValue, setInputValue] = useState(keyValue === null ? "" : keyValue.toString());
   const [confirmationValue, setConfirmationValue] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showKey, setShowKey] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const trimmedValue = inputValue.trim();
     const newKey = Number(trimmedValue);
     if (!trimmedValue || !Number.isFinite(newKey) || newKey === 0) {
@@ -37,7 +37,7 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
       setErrorMessage("Secret Keys do not match");
       return;
     }
-    const error = setKeyValue(newKey);
+    const error = await setKeyValue(newKey);
     if (error) {
       setErrorMessage(error);
       return;

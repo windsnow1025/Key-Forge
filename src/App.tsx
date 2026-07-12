@@ -25,15 +25,15 @@ function App() {
     setDialogOpen(true);
   };
 
-  const handleSetKey = (newKey: number) => {
-    saveSecretKeyVerifier(newKey);
+  const handleSetKey = async (newKey: number) => {
+    await saveSecretKeyVerifier(newKey);
     setHasSavedVerifier(true);
     setKey(newKey);
     return null;
   };
 
-  const handleUnlockKey = (newKey: number) => {
-    if (!verifySecretKey(newKey)) {
+  const handleUnlockKey = async (newKey: number) => {
+    if (!(await verifySecretKey(newKey))) {
       return "Secret Key is incorrect";
     }
     setKey(newKey);
