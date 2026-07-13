@@ -55,6 +55,5 @@ function computeSecretKeyVerifier(secretKey: number, salt: string) {
 }
 
 function generateSalt() {
-  const salt = crypto.getRandomValues(new Uint8Array(SaltByteLength));
-  return Array.from(salt, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return crypto.getRandomValues(new Uint8Array(SaltByteLength)).toHex();
 }
