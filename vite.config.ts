@@ -24,6 +24,10 @@ export default defineConfig({
             type: 'image/svg+xml'
           }
         ]
+      },
+      // pwa assets
+      pwaAssets: {
+        // options
       }
     })
   ],
