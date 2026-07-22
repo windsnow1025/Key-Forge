@@ -17,13 +17,6 @@ export default defineConfig({
         short_name: 'KeyForge',
         description: 'Master key based SHA password derivation and AES text cipher',
         theme_color: '#121212',
-        icons: [
-          {
-            src: 'favicon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml'
-          }
-        ]
       },
       // pwa assets
       pwaAssets: {
