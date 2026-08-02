@@ -18,7 +18,7 @@ function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue, reset}: {
   open: boolean;
   onClose: () => void;
   onExited: () => void;
-  setKeyValue: (newKey: string) => Promise<string | null>;
+  setKeyValue: (key: string) => Promise<string | null>;
   reset: () => void;
 }) {
   const [inputValue, setInputValue] = useState("");

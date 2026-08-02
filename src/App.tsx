@@ -31,11 +31,11 @@ function App() {
     setKey(newKey);
   };
 
-  const handleUnlockKey = async (newKey: string) => {
-    if (!(await verifySecretKey(newKey))) {
+  const handleUnlockKey = async (enteredKey: string) => {
+    if (!(await verifySecretKey(enteredKey))) {
       return "Secret Key is incorrect";
     }
-    setKey(newKey);
+    setKey(enteredKey);
     return null;
   };
 
