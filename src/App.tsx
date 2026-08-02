@@ -69,6 +69,7 @@ function App() {
             onClose={() => setDialogOpen(false)}
             onExited={() => setDialogMounted(false)}
             setKeyValue={handleUnlockKey}
+            reset={() => setDialogMode(SecretKeyDialogMode.Setup)}
           />
         )}
         <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">

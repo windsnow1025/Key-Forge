@@ -14,11 +14,12 @@ import KeyIcon from "@mui/icons-material/Key";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue}: {
+function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue, reset}: {
   open: boolean;
   onClose: () => void;
   onExited: () => void;
   setKeyValue: (newKey: string) => Promise<string | null>;
+  reset: () => void;
 }) {
   const [inputValue, setInputValue] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -93,6 +94,7 @@ function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue}: {
         </FormControl>
       </DialogContent>
       <DialogActions>
+        <Button onClick={reset}>Reset</Button>
         <Button onClick={handleUnlock} variant="contained">Unlock</Button>
       </DialogActions>
     </Dialog>
