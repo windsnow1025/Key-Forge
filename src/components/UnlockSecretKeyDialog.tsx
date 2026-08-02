@@ -18,7 +18,7 @@ function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue}: {
   open: boolean;
   onClose: () => void;
   onExited: () => void;
-  setKeyValue: (newKey: number) => Promise<string | null>;
+  setKeyValue: (newKey: string) => Promise<string | null>;
 }) {
   const [inputValue, setInputValue] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -26,12 +26,11 @@ function UnlockSecretKeyDialog({open, onClose, onExited, setKeyValue}: {
 
   const handleUnlock = async () => {
     const trimmedValue = inputValue.trim();
-    const newKey = Number(trimmedValue);
-    if (!trimmedValue || !Number.isFinite(newKey) || newKey === 0) {
+    if (!trimmedValue) {
       setErrorMessage("Secret Key is required");
       return;
     }
-    const error = await setKeyValue(newKey);
+    const error = await setKeyValue(trimmedValue);
     if (error) {
       setErrorMessage(error);
       return;

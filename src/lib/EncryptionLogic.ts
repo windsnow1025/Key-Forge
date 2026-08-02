@@ -3,14 +3,14 @@ import {sha256Bytes} from "./Hash";
 // Ciphertext format: base64 (AES-256-GCM ciphertext + 12 bytes IV)
 export const IVByteLength = 12;
 
-async function importAESKey(key: number): Promise<CryptoKey> {
-  const digest = await sha256Bytes(key.toString());
+async function importAESKey(key: string): Promise<CryptoKey> {
+  const digest = await sha256Bytes(key);
   return crypto.subtle.importKey("raw", digest, "AES-GCM", false, ["encrypt", "decrypt"]);
 }
 
 export async function encryptAES(
   plaintext: string,
-  key: number,
+  key: string,
   iv: Uint8Array<ArrayBuffer> = crypto.getRandomValues(new Uint8Array(IVByteLength)),
 ): Promise<string> {
   if (!plaintext) return "";
@@ -28,7 +28,7 @@ export async function encryptAES(
   return payload.toBase64();
 }
 
-export async function decryptAES(ciphertext: string, key: number): Promise<string> {
+export async function decryptAES(ciphertext: string, key: string): Promise<string> {
   if (!ciphertext) return "";
 
   try {

@@ -12,7 +12,7 @@ export function hasSecretKeyVerifier() {
   return readSecretKeyVerifier() !== null;
 }
 
-export async function saveSecretKeyVerifier(secretKey: number) {
+export async function saveSecretKeyVerifier(secretKey: string) {
   const salt = generateSalt();
   const payload: SecretKeyVerifier = {
     salt,
@@ -21,7 +21,7 @@ export async function saveSecretKeyVerifier(secretKey: number) {
   localStorage.setItem(SecretKeyVerifierStorage, JSON.stringify(payload));
 }
 
-export async function verifySecretKey(secretKey: number) {
+export async function verifySecretKey(secretKey: string) {
   const payload = readSecretKeyVerifier();
   if (!payload) {
     return false;
@@ -49,7 +49,7 @@ function readSecretKeyVerifier(): SecretKeyVerifier | null {
   }
 }
 
-function computeSecretKeyVerifier(secretKey: number, salt: string) {
+function computeSecretKeyVerifier(secretKey: string, salt: string) {
   const verifierInput = `${salt}:${secretKey}`;
   return sha256Hex(verifierInput);
 }

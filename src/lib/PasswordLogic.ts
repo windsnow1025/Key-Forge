@@ -1,6 +1,6 @@
 import {sha256Hex} from "./Hash";
 
-export async function generatePassword(key: number, name: string, no: number, length: number) {
+export async function generatePassword(key: string, name: string, no: number, length: number) {
   const prefix = getPrefix(name);
   const suffix = await getSuffix(key, name, no, length - 3);
   return prefix + "!" + suffix;
@@ -24,7 +24,7 @@ function getPrefix(name: string) {
   return letters[0].toUpperCase() + letters[1].toLowerCase();
 }
 
-async function getSuffix(key: number, name: string, no: number, length: number) {
+async function getSuffix(key: string, name: string, no: number, length: number) {
   const input = name + no + key;
   const hashedPassword = await sha256Hex(input);
   return hashedPassword.substring(0, length);

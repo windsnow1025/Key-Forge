@@ -11,7 +11,7 @@ import ThemeSwitch from "./components/ThemeSwitch";
 import UnlockSecretKeyDialog from "./components/UnlockSecretKeyDialog";
 
 function App() {
-  const [key, setKey] = useState<number | null>(null);
+  const [key, setKey] = useState<string | null>(null);
   const [hasSavedVerifier, setHasSavedVerifier] = useState(() => hasSecretKeyVerifier());
   const [dialogMode, setDialogMode] = useState<SecretKeyDialogMode>(
     hasSavedVerifier ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup
@@ -25,14 +25,14 @@ function App() {
     setDialogOpen(true);
   };
 
-  const handleSetKey = async (newKey: number) => {
+  const handleSetKey = async (newKey: string) => {
     await saveSecretKeyVerifier(newKey);
     setHasSavedVerifier(true);
     setKey(newKey);
     return null;
   };
 
-  const handleUnlockKey = async (newKey: number) => {
+  const handleUnlockKey = async (newKey: string) => {
     if (!(await verifySecretKey(newKey))) {
       return "Secret Key is incorrect";
     }

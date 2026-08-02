@@ -20,7 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {generatePassword} from "../lib/PasswordLogic";
 
-function PasswordGenerator({keyValue}: {keyValue: number | null}) {
+function PasswordGenerator({keyValue}: {keyValue: string | null}) {
   const [name, setName] = useState("");
   const [no, setNo] = useState(0);
   const [length, setLength] = useState(16);

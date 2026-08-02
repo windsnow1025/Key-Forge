@@ -20,7 +20,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {decryptAES, encryptAES} from "../lib/EncryptionLogic";
 
-function EncryptorDecryptor({keyValue}: {keyValue: number | null}) {
+function EncryptorDecryptor({keyValue}: {keyValue: string | null}) {
   const [tabValue, setTabValue] = useState(0);
   const [plaintext, setPlaintext] = useState("");
   const [ciphertext, setCiphertext] = useState("");
