@@ -12,22 +12,20 @@ import UnlockSecretKeyDialog from "./components/UnlockSecretKeyDialog";
 
 function App() {
   const [key, setKey] = useState<string | null>(null);
-  const [hasSavedVerifier, setHasSavedVerifier] = useState(() => hasSecretKeyVerifier());
   const [dialogMode, setDialogMode] = useState<SecretKeyDialogMode>(
-    hasSavedVerifier ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup
+    () => hasSecretKeyVerifier() ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup
   );
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogMounted, setDialogMounted] = useState(true);
 
   const openDialog = () => {
-    setDialogMode(hasSavedVerifier && key === null ? SecretKeyDialogMode.Unlock : SecretKeyDialogMode.Setup);
+    setDialogMode(SecretKeyDialogMode.Setup);
     setDialogMounted(true);
     setDialogOpen(true);
   };
 
   const handleSetKey = async (newKey: string) => {
     await saveSecretKeyVerifier(newKey);
-    setHasSavedVerifier(true);
     setKey(newKey);
   };
 
