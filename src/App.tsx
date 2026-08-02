@@ -29,7 +29,6 @@ function App() {
     await saveSecretKeyVerifier(newKey);
     setHasSavedVerifier(true);
     setKey(newKey);
-    return null;
   };
 
   const handleUnlockKey = async (newKey: string) => {

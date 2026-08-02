@@ -19,7 +19,7 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
   onClose: () => void;
   onExited: () => void;
   keyValue: string | null;
-  setKeyValue: (newKey: string) => Promise<string | null>;
+  setKeyValue: (newKey: string) => Promise<void>;
 }) {
   const [inputValue, setInputValue] = useState(keyValue ?? "");
   const [confirmationValue, setConfirmationValue] = useState("");
@@ -36,11 +36,7 @@ function SetSecretKeyDialog({open, onClose, onExited, keyValue, setKeyValue}: {
       setErrorMessage("Secret Keys do not match");
       return;
     }
-    const error = await setKeyValue(trimmedValue);
-    if (error) {
-      setErrorMessage(error);
-      return;
-    }
+    await setKeyValue(trimmedValue);
     onClose();
   };
 
